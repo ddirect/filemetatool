@@ -20,11 +20,11 @@ func (c *countSize) update(size int64) {
 	c.size += size
 }
 
-func (c *countSize) appendKv(a []kv, name string) []kv {
+func (c *countSize) appendRow(t format.Table, name string) format.Table {
 	if c.count > 0 {
-		return append(a, kv{name, []interface{}{c.count, format.Size(c.size)}})
+		return append(t, format.TableRow{name, c.count, format.Size(c.size)})
 	}
-	return a
+	return t
 }
 
 type statPack struct {
@@ -55,12 +55,12 @@ func (s *statPack) updateX(d *filemeta.Data, flags int) {
 	}
 }
 
-func (s *statPack) toKv() []kv {
-	a := []kv{kv{".", []interface{}{"count", "size"}}}
-	a = s.total.appendKv(a, "total")
-	a = s.changed.appendKv(a, "changed")
-	a = s.untracked.appendKv(a, "untracked")
-	a = s.hashed.appendKv(a, "hashed")
-	a = s.failed.appendKv(a, "failed")
+func (s *statPack) toTable() format.Table {
+	a := format.Table{format.TableRow{".", "count", "size"}}
+	a = s.total.appendRow(a, "total")
+	a = s.changed.appendRow(a, "changed")
+	a = s.untracked.appendRow(a, "untracked")
+	a = s.hashed.appendRow(a, "hashed")
+	a = s.failed.appendRow(a, "failed")
 	return a
 }

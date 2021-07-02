@@ -35,7 +35,7 @@ func fetch(fetchFunc func(string) (data filemeta.Data, errOut error)) (func(stri
 			check(err)
 			s.update(&data)
 		}, func() {
-			printkv(s.toKv())
+			fmt.Print(s.toTable())
 		}
 }
 
@@ -55,6 +55,6 @@ func scrub() (func(string), func()) {
 			}
 			s.updateX(&data, flags)
 		}, func() {
-			printkv(s.toKv())
+			fmt.Print(s.toTable())
 		}
 }
