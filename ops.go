@@ -28,7 +28,7 @@ func listCore(fileName string) {
 	fmt.Printf("%64s%20d  %s  %s\n", hash, data.Info.Size(), formatTime(data.Info.ModTime()), fileName)
 }
 
-func fetch(fetchFunc func(string) (data filemeta.Data, errOut error)) (func(string), func()) {
+func fetch(fetchFunc filemeta.FetchFunc) (func(string), func()) {
 	var s statPack
 	return func(fileName string) {
 			data, err := fetchFunc(fileName)

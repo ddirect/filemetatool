@@ -20,11 +20,10 @@ func (c *countSize) update(size int64) {
 	c.size += size
 }
 
-func (c *countSize) appendRow(t format.Table, name string) format.Table {
+func (c *countSize) appendRow(t *format.Table, name string) {
 	if c.count > 0 {
-		return append(t, format.TableRow{name, c.count, format.Size(c.size)})
+		t.Append(name, c.count, format.Size(c.size))
 	}
-	return t
 }
 
 type statPack struct {
@@ -55,12 +54,13 @@ func (s *statPack) updateX(d *filemeta.Data, flags int) {
 	}
 }
 
-func (s *statPack) toTable() format.Table {
-	a := format.Table{format.TableRow{".", "count", "size"}}
-	a = s.total.appendRow(a, "total")
-	a = s.changed.appendRow(a, "changed")
-	a = s.untracked.appendRow(a, "untracked")
-	a = s.hashed.appendRow(a, "hashed")
-	a = s.failed.appendRow(a, "failed")
+func (s *statPack) toTable() *format.Table {
+	a := new(format.Table)
+	a.Append(".", "count", "size")
+	s.total.appendRow(a, "total")
+	s.changed.appendRow(a, "changed")
+	s.untracked.appendRow(a, "untracked")
+	s.hashed.appendRow(a, "hashed")
+	s.failed.appendRow(a, "failed")
 	return a
 }
