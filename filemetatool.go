@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"sync"
 
+	"github.com/ddirect/check"
 	"github.com/ddirect/filemeta"
 )
 
@@ -73,12 +74,12 @@ func main() {
 
 	for _, f := range files {
 		fi, err := os.Stat(f)
-		check(err)
+		check.E(err)
 		if fi.Mode().IsRegular() {
 			queue(f)
 		} else if fi.IsDir() {
 			filepath.WalkDir(f, func(path string, d fs.DirEntry, err error) error {
-				check(err)
+				check.E(err)
 				if d.Type().IsRegular() {
 					queue(path)
 				}

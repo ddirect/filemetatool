@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/ddirect/check"
 	"github.com/ddirect/filemeta"
 )
 
@@ -16,7 +17,7 @@ var nullHash = make([]byte, 32)
 
 func listCore(fileName string) {
 	data, err := filemeta.Get(fileName)
-	check(err)
+	check.E(err)
 	var hash string
 	if data.Attr != nil {
 		hash = hex.EncodeToString(data.Attr.Hash)
@@ -28,12 +29,20 @@ func listCore(fileName string) {
 	fmt.Printf("%64s%20d  %s  %s\n", hash, data.Info.Size(), formatTime(data.Info.ModTime()), fileName)
 }
 
+func handle(err error) int {
+	flags := 0
+	if err != nil {
+		fmt.Println(err)
+		flags = flagError
+	}
+	return flags
+}
+
 func fetch(fetchFunc filemeta.FetchFunc) (func(string), func()) {
 	var s statPack
 	return func(fileName string) {
 			data, err := fetchFunc(fileName)
-			check(err)
-			s.update(&data)
+			s.updateX(&data, handle(err))
 		}, func() {
 			fmt.Print(s.toTable())
 		}
@@ -43,12 +52,10 @@ func scrub() (func(string), func()) {
 	var s statPack
 	return func(fileName string) {
 			data, err := filemeta.Get(fileName)
-			check(err)
-			flags := 0
+			flags := handle(err)
 			if data.Attr != nil {
 				ok, err := data.Verify()
-				check(err)
-				if !ok {
+				if flags = handle(err); !ok && flags == 0 {
 					fmt.Printf("failed: %s\n", data.Path)
 					flags = flagFailed
 				}

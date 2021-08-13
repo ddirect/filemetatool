@@ -9,6 +9,7 @@ import (
 
 const (
 	flagFailed = 1 << iota
+	flagError
 )
 
 type countSize struct {
@@ -27,8 +28,8 @@ func (c *countSize) appendRow(t *format.Table, name string) {
 }
 
 type statPack struct {
-	total, untracked, hashed, changed, failed countSize
-	mutex                                     sync.Mutex
+	total, untracked, hashed, changed, failed, errors countSize
+	mutex                                             sync.Mutex
 }
 
 func (s *statPack) update(d *filemeta.Data) {
@@ -38,7 +39,13 @@ func (s *statPack) update(d *filemeta.Data) {
 func (s *statPack) updateX(d *filemeta.Data, flags int) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-	size := d.Info.Size()
+	var size int64
+	if d.Info != nil {
+		size = d.Info.Size()
+	}
+	if flags&flagError != 0 {
+		s.errors.update(size)
+	}
 	s.total.update(size)
 	if d.Attr == nil {
 		s.untracked.update(size)
@@ -62,5 +69,6 @@ func (s *statPack) toTable() *format.Table {
 	s.untracked.appendRow(a, "untracked")
 	s.hashed.appendRow(a, "hashed")
 	s.failed.appendRow(a, "failed")
+	s.errors.appendRow(a, "errors")
 	return a
 }
