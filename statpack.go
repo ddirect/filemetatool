@@ -8,8 +8,7 @@ import (
 )
 
 const (
-	flagFailed = 1 << iota
-	flagError
+	flagError = 1 << iota
 )
 
 type countSize struct {
@@ -56,7 +55,7 @@ func (s *statPack) updateX(d *filemeta.Data, flags int) {
 	if d.Changed {
 		s.changed.update(size)
 	}
-	if flags&flagFailed != 0 {
+	if d.VerifyFailed {
 		s.failed.update(size)
 	}
 }

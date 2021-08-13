@@ -38,7 +38,7 @@ func main() {
 	case "inspect":
 		core, epilogue = fetch(filemeta.Inspect)
 	case "scrub":
-		core, epilogue = scrub()
+		core, epilogue = fetch(filemeta.Verify)
 	default:
 		fmt.Fprintf(os.Stderr, "unknown operation '%s'\n", do)
 		return

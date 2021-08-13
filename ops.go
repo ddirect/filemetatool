@@ -47,21 +47,3 @@ func fetch(fetchFunc filemeta.FetchFunc) (func(string), func()) {
 			fmt.Print(s.toTable())
 		}
 }
-
-func scrub() (func(string), func()) {
-	var s statPack
-	return func(fileName string) {
-			data, err := filemeta.Get(fileName)
-			flags := handle(err)
-			if data.Attr != nil {
-				ok, err := data.Verify()
-				if flags = handle(err); !ok && flags == 0 {
-					fmt.Printf("failed: %s\n", data.Path)
-					flags = flagFailed
-				}
-			}
-			s.updateX(&data, flags)
-		}, func() {
-			fmt.Print(s.toTable())
-		}
-}
