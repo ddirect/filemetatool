@@ -16,8 +16,8 @@ func formatTime(x time.Time) string {
 var nullHash = make([]byte, 32)
 
 func listCore(fileName string) {
-	data, err := filemeta.Get(fileName)
-	check.E(err)
+	data := filemeta.Get(fileName)
+	check.E(data.Error)
 	var hash string
 	if data.Attr != nil {
 		hash = hex.EncodeToString(data.Attr.Hash)
@@ -41,8 +41,8 @@ func handle(err error) int {
 func fetch(fetchFunc filemeta.FetchFunc) (func(string), func()) {
 	var s statPack
 	return func(fileName string) {
-			data, err := fetchFunc(fileName)
-			s.updateX(&data, handle(err))
+			data := fetchFunc(fileName)
+			s.updateX(&data, handle(data.Error))
 		}, func() {
 			fmt.Print(s.toTable())
 		}
