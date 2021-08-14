@@ -7,10 +7,6 @@ import (
 	"github.com/ddirect/format"
 )
 
-const (
-	flagError = 1 << iota
-)
-
 type countSize struct {
 	count, size int64
 }
@@ -32,20 +28,16 @@ type statPack struct {
 }
 
 func (s *statPack) update(d *filemeta.Data) {
-	s.updateX(d, 0)
-}
-
-func (s *statPack) updateX(d *filemeta.Data, flags int) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	var size int64
 	if d.Info != nil {
 		size = d.Info.Size()
 	}
-	if flags&flagError != 0 {
+	s.total.update(size)
+	if d.Error != nil {
 		s.errors.update(size)
 	}
-	s.total.update(size)
 	if d.Attr == nil {
 		s.untracked.update(size)
 	}

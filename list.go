@@ -13,7 +13,7 @@ func formatTime(x time.Time) string {
 	return x.Format("2006-01-02 15:04:05.000")
 }
 
-var nullHash = make([]byte, 32)
+var nullHash = make([]byte, filemeta.HashSize)
 
 func listCore(fileName string) {
 	data := filemeta.Get(fileName)
@@ -27,23 +27,4 @@ func listCore(fileName string) {
 		}
 	}
 	fmt.Printf("%64s%20d  %s  %s\n", hash, data.Info.Size(), formatTime(data.Info.ModTime()), fileName)
-}
-
-func handle(err error) int {
-	flags := 0
-	if err != nil {
-		fmt.Println(err)
-		flags = flagError
-	}
-	return flags
-}
-
-func fetch(fetchFunc filemeta.FetchFunc) (func(string), func()) {
-	var s statPack
-	return func(fileName string) {
-			data := fetchFunc(fileName)
-			s.updateX(&data, handle(data.Error))
-		}, func() {
-			fmt.Print(s.toTable())
-		}
 }

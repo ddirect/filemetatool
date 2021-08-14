@@ -3,19 +3,18 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/fs"
 	"os"
-	"path/filepath"
 	"runtime"
-	"sync"
 
-	"github.com/ddirect/check"
 	"github.com/ddirect/filemeta"
 )
 
 func main() {
 	var do string
+	var probeThreads, hashThreads int
 	flag.StringVar(&do, "do", "", "list|refresh|stat|scrub|inspect")
+	flag.IntVar(&probeThreads, "probe_threads", runtime.NumCPU(), "number of threads used to probe the metadata")
+	flag.IntVar(&hashThreads, "hash_threads", runtime.NumCPU(), "number of threads used for hashing")
 	flag.Parse()
 
 	files := flag.Args()
@@ -24,67 +23,39 @@ func main() {
 		return
 	}
 
-	var core, queue func(string)
-	var epilogue func()
-	workerPool := true
+	var op filemeta.Op
 	switch do {
 	case "list":
-		core = listCore
-		workerPool = false
+		walk(files, listCore)
+		return
 	case "refresh":
-		core, epilogue = fetch(filemeta.Refresh)
+		op = filemeta.OpRefresh
 	case "stat":
-		core, epilogue = fetch(filemeta.Get)
+		op = filemeta.OpGet
 	case "inspect":
-		core, epilogue = fetch(filemeta.Inspect)
+		op = filemeta.OpInspect
 	case "scrub":
-		core, epilogue = fetch(filemeta.Verify)
+		op = filemeta.OpVerify
 	default:
-		fmt.Fprintf(os.Stderr, "unknown operation '%s'\n", do)
+		fmt.Fprintf(os.Stderr, "unknown operation '%s'\n", op)
 		return
 	}
 
-	if epilogue != nil {
-		defer epilogue()
-	}
+	async := filemeta.AsyncOperations(op, probeThreads, hashThreads)
 
-	if workerPool {
-		workers := runtime.NumCPU()
-		var wg sync.WaitGroup
-		fileChannel := make(chan string, 4000)
-		queue = func(path string) {
-			fileChannel <- path
-		}
-		wg.Add(workers)
-		for i := 0; i < workers; i++ {
-			go func() {
-				for fileName := range fileChannel {
-					core(fileName)
-				}
-				wg.Done()
-			}()
-		}
-		defer func() {
-			close(fileChannel)
-			wg.Wait()
-		}()
-	} else {
-		queue = core
-	}
+	go func() {
+		walk(files, func(path string) {
+			async.FileIn <- path
+		})
+		close(async.FileIn)
+	}()
 
-	for _, f := range files {
-		fi, err := os.Stat(f)
-		check.E(err)
-		if fi.Mode().IsRegular() {
-			queue(f)
-		} else if fi.IsDir() {
-			filepath.WalkDir(f, func(path string, d fs.DirEntry, err error) error {
-				check.E(err)
-				if d.Type().IsRegular() {
-					queue(path)
-				}
-				return nil
-			})
+	var s statPack
+	for data := range async.DataOut {
+		if data.Error != nil {
+			fmt.Println(data.Error)
 		}
+		s.update(&data)
 	}
+	fmt.Print(s.toTable())
 }
