@@ -50,7 +50,7 @@ func main() {
 		close(async.FileIn)
 	}()
 
-	var s statPack
+	s := newStatPack()
 	for data := range async.DataOut {
 		if data.Error != nil {
 			fmt.Println(data.Error)
