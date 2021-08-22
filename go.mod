@@ -6,6 +6,10 @@ replace github.com/ddirect/format => ../format
 
 replace github.com/ddirect/check => ../check
 
+replace github.com/ddirect/filetest => ../filetest
+
+replace github.com/ddirect/xrand => ../xrand
+
 go 1.16
 
 require (
