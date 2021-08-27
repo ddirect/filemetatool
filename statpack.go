@@ -16,7 +16,7 @@ func (c *countSize) update(size int64) {
 
 func (c *countSize) appendRow(t *format.Table, name string) {
 	if c.count > 0 {
-		t.Append(name, c.count, format.Size(c.size))
+		t.AppendRow(name, c.count, format.Size(c.size))
 	}
 }
 
@@ -60,7 +60,7 @@ func (s *statPack) update(d *filemeta.Data) {
 
 func (s *statPack) toTable() *format.Table {
 	a := new(format.Table)
-	a.Append(".", "count", "size")
+	a.AppendRow(".", "count", "size")
 	s.total.appendRow(a, "total")
 	s.unique.appendRow(a, "unique")
 	s.changed.appendRow(a, "changed")

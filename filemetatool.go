@@ -13,8 +13,8 @@ func main() {
 	var do string
 	var probeThreads, hashThreads int
 	flag.StringVar(&do, "do", "", "list|refresh|stat|scrub|inspect")
-	flag.IntVar(&probeThreads, "probe_threads", runtime.NumCPU(), "number of threads used to probe the metadata")
-	flag.IntVar(&hashThreads, "hash_threads", runtime.NumCPU(), "number of threads used for hashing")
+	flag.IntVar(&probeThreads, "probe_threads", runtime.NumCPU(), "number of threads used to probe the metadata (excluding refresh)")
+	flag.IntVar(&hashThreads, "hash_threads", runtime.NumCPU(), "number of threads used for hashing (excluding refresh)")
 	flag.Parse()
 
 	files := flag.Args()
