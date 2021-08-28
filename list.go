@@ -18,13 +18,9 @@ var nullHash = make([]byte, filemeta.HashSize)
 func listCore(fileName string) {
 	data := filemeta.Get(fileName)
 	check.E(data.Error)
-	var hash string
-	if data.Attr != nil {
-		hash = hex.EncodeToString(data.Attr.Hash)
-	} else {
-		if data.Changed {
-			hash = "<changed>"
-		}
+	hash := "<changed>"
+	if !data.Changed {
+		hash = hex.EncodeToString(data.Hash)
 	}
-	fmt.Printf("%64s%20d  %s  %s\n", hash, data.Info.Size(), formatTime(data.Info.ModTime()), fileName)
+	fmt.Printf("%64s%20d  %s  %s\n", hash, data.Size, formatTime(data.GetModTime()), fileName)
 }

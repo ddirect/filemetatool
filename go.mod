@@ -10,6 +10,8 @@ replace github.com/ddirect/filetest => ../filetest
 
 replace github.com/ddirect/xrand => ../xrand
 
+replace github.com/ddirect/sys => ../sys
+
 go 1.16
 
 require (

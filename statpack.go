@@ -30,31 +30,27 @@ func newStatPack() *statPack {
 }
 
 func (s *statPack) update(d *filemeta.Data) {
-	var size int64
-	if d.Info != nil {
-		size = d.Info.Size()
-	}
-	s.total.update(size)
+	s.total.update(d.Size)
 	if d.Error != nil {
-		s.errors.update(size)
+		s.errors.update(d.Size)
 	}
-	if d.Attr == nil {
-		s.untracked.update(size)
+	if d.Hash == nil {
+		s.untracked.update(d.Size)
 	} else {
-		key := filemeta.ToHashKey(d.Attr.Hash)
+		key := filemeta.ToHashKey(d.Hash)
 		if !s.hashes[key] {
 			s.hashes[key] = true
-			s.unique.update(size)
+			s.unique.update(d.Size)
 		}
 	}
 	if d.Hashed {
-		s.hashed.update(size)
+		s.hashed.update(d.Size)
 	}
 	if d.Changed {
-		s.changed.update(size)
+		s.changed.update(d.Size)
 	}
 	if d.VerifyFailed {
-		s.failed.update(size)
+		s.failed.update(d.Size)
 	}
 }
 
