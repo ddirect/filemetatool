@@ -18,4 +18,5 @@ require (
 	github.com/ddirect/check v0.0.0-00010101000000-000000000000
 	github.com/ddirect/filemeta v0.0.0-00010101000000-000000000000
 	github.com/ddirect/format v0.0.0-00010101000000-000000000000
+	github.com/ddirect/sys v0.0.0-00010101000000-000000000000
 )
