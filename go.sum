@@ -1,7 +1,7 @@
 github.com/ddirect/check v0.1.0 h1:EWeMBDOi+rz53REWYDoXtttgOUe4k+JT1ZfGX3hY4L0=
 github.com/ddirect/check v0.1.0/go.mod h1:V0lq/uzL1m4NY/Q0C7k5yG73S9PEdB9ILYh/Pme72zo=
-github.com/ddirect/filemeta v0.1.0 h1:BrNKWFBtLyJg7cflgUfCIV02Yz+55e3gVwl/FJ5TLhQ=
-github.com/ddirect/filemeta v0.1.0/go.mod h1:o/JgEr9RMbApar1ynA/Pymy0e5qM3AbXUS2PAiw2WYI=
+github.com/ddirect/filemeta v0.1.1 h1:iU+kUkvPz7dPopOiXR8ktK3KAFnJPg4XWExjYkPCk7w=
+github.com/ddirect/filemeta v0.1.1/go.mod h1:o/JgEr9RMbApar1ynA/Pymy0e5qM3AbXUS2PAiw2WYI=
 github.com/ddirect/filetest v0.1.0 h1:z3NQPJvO9LwADFjVgyfCc5jhUt94J0jRga2PkNeNY9U=
 github.com/ddirect/filetest v0.1.0/go.mod h1:NjdfbaUSCN2m6CpuyxS5vjQYu7otKrphR17nA1Ai0ZM=
 github.com/ddirect/format v0.1.0 h1:bGbQ6mfTju04mMGKFa/mv7S+H45Gx8X1dlhLEc9ppt8=

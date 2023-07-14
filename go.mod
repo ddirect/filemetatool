@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/ddirect/check v0.1.0
-	github.com/ddirect/filemeta v0.1.0
+	github.com/ddirect/filemeta v0.1.1
 	github.com/ddirect/format v0.1.0
 	github.com/ddirect/sys v0.1.0
 )
